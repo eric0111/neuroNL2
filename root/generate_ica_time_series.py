@@ -9,6 +9,7 @@ from nilearn.decomposition import CanICA
 
 def generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER):
     # LOAD IMAGES
+    print("Loading images...")
     images_filenames = os.listdir(IMAGES_FOLDER)
     try:
         images_filenames.remove(".DS_Store")
@@ -16,17 +17,18 @@ def generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER):
         print(e)
     images_filenames.sort()
 
-    print(images_filenames)
+    #print(images_filenames)
 
     images_abs_paths = []
     for atlas in images_filenames:
         images_abs_paths.append(IMAGES_FOLDER + atlas)
 
-    print(images_abs_paths)
+    #print(images_abs_paths)
 
     images = nilearn.image.load_img(images_abs_paths)
 
     # RUN ICA
+    print("Running ICA...")
     canica = CanICA(n_components=20,
                     memory="nilearn_cache", memory_level=2,
                     verbose=10,
@@ -46,7 +48,7 @@ def generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER):
     # threshold=0.5 indicates that we keep nominal of amount nonzero voxels across all
     # maps, less the threshold means that more intense non-voxels will be survived.
     from nilearn.regions import RegionExtractor
-    print("extracting most intense regions...")
+    print("extracting the most intense regions...")
     extractor = RegionExtractor(components_img, threshold=0.5,
                                 thresholding_strategy='ratio_n_voxels',
                                 extractor='local_regions',
@@ -55,7 +57,7 @@ def generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER):
     extractor.fit()
     # Extracted regions are stored in regions_img_
     regions_extracted_img = extractor.regions_img_
-    regions_extracted_img.to_filename(OUTPUT_FOLDER + "regions_extracted_img.nii.gz")
+
     # Each region index is stored in index_
     regions_index = extractor.index_
     # Total number of regions extracted
@@ -71,8 +73,10 @@ def generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER):
     plt.savefig(OUTPUT_FOLDER + "regions_extracted_img.png")
 
     #GENERATE AND SAVE TIME SERIES
+    print("Generating time-series...")
     for filename, image in zip(images_filenames, images_abs_paths):
         # call transform from RegionExtractor object to extract timeseries signals
+        print(filename)
         timeseries_each_subject = extractor.transform(image)
         numpy.save(OUTPUT_FOLDER + "time_series/" + filename.split("/")[-1].split(".nii")[0] + ".npy",
                                    timeseries_each_subject)

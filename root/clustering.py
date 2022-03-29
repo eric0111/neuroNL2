@@ -75,4 +75,4 @@ def clustering(TIME_SERIES_FOLDER, OUTPUT_FOLDER):
     plt.gca().axvline(.8, color='red', linestyle='--')
     plt.xlabel('Classification accuracy\n(red line = chance level)')
     plt.tight_layout()
-    plt.savefig("test.png")
+    plt.savefig(OUTPUT_FOLDER+ "clustering_results.png")
