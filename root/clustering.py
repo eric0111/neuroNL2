@@ -36,10 +36,10 @@ def clustering(TIME_SERIES_FOLDER, OUTPUT_FOLDER):
     print(classes)
 
     #CLUSTERING VIA SVM + CROSS-VALIDATION
-    #kinds = ['correlation', 'partial correlation', 'tangent']
-    kinds = ['correlation']
+    kinds = ['correlation', 'partial correlation', 'tangent']
+    #kinds = ['correlation']
 
-    cv = StratifiedShuffleSplit(n_splits=6, random_state=0, test_size=2)
+    cv = StratifiedShuffleSplit(n_splits=15, random_state=0, test_size=15)
     pooled_subjects = np.asarray(pooled_subjects)
 
     scores = {}
