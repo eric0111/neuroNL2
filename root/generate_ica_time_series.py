@@ -25,7 +25,7 @@ def generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER):
 
     #print(images_abs_paths)
 
-    images = nilearn.image.load_img(images_abs_paths)
+    images = nilearn.image.load_img(images_abs_paths[0:24] + images_abs_paths[146:170]) #todo correct thinICA
 
     # RUN ICA
     print("Running ICA...")
