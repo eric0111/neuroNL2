@@ -1,5 +1,6 @@
 from root.clustering import clustering
 from root.generate_ica_time_series import generate_ica_time_series
+from root.generate_ica_time_series_NILEARN import generate_ica_time_series_NILEARN
 from root.images_cleaner import images_cleaner
 import time
 #TIME - stopsignal
@@ -26,17 +27,26 @@ import time
 # generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER)
 # elapsed = time.time() - t
 # print("generate_ica_time_series: ", elapsed)
-# #generate_ica_time_series:  2562.8496882915497 - 43 mins
-#
-# t = time.time()
-# TIME_SERIES_FOLDER = "../bin/output/stopsignal/time_series/"
-# OUTPUT_FOLDER = "../bin/output/stopsignal/"
-# clustering(TIME_SERIES_FOLDER, OUTPUT_FOLDER)
-# elapsed = time.time() - t
-# print("clustering: ", elapsed)
-# #clustering:  36.4996874332428 - 35 secs
-#
-#
+#generate_ica_time_series:  2562.8496882915497 - 43 mins
+
+t = time.time()
+IMAGES_FOLDER = "/home/eb/Desktop/stopsignal_cleaned/"
+OUTPUT_FOLDER = "../bin/output/stopsignal2/"
+CONFOUNDS = "/home/eb/Desktop/stopsignal_confounds/"
+generate_ica_time_series_NILEARN(IMAGES_FOLDER, OUTPUT_FOLDER, CONFOUNDS)
+elapsed = time.time() - t
+print("generate_ica_time_series2: ", elapsed)
+#generate_ica_time_series:
+
+t = time.time()
+TIME_SERIES_FOLDER = "../bin/output/stopsignal2/time_series/"
+OUTPUT_FOLDER = "../bin/output/stopsignal2/"
+clustering(TIME_SERIES_FOLDER, OUTPUT_FOLDER)
+elapsed = time.time() - t
+print("clustering: ", elapsed)
+#clustering:  36.4996874332428 - 35 secs
+
+
 # t = time.time()
 # FILES  =  "/home/eb/Desktop/bart/"
 # CONFOUNDS =  "/home/eb/Desktop/bart_confounds/"
@@ -46,12 +56,12 @@ import time
 # print("images_cleaner: ", elapsed)
 # #images_cleaner:  6574.576639652252 - 110 mins
 
-# t = time.time()
-# IMAGES_FOLDER = "/home/eb/Desktop/bart_cleaned/"
-# OUTPUT_FOLDER = "../bin/output/bart/"
-# generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER)
-# elapsed = time.time() - t
-# print("generate_ica_time_series: ", elapsed)
+t = time.time()
+IMAGES_FOLDER = "/home/eb/Desktop/bart_cleaned/"
+OUTPUT_FOLDER = "../bin/output/bart/"
+generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER)
+elapsed = time.time() - t
+print("generate_ica_time_series: ", elapsed)
 
 t = time.time()
 TIME_SERIES_FOLDER = "../bin/output/bart/time_series/"

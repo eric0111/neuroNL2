@@ -1,5 +1,6 @@
 from root.clustering import clustering
 from root.generate_ica_time_series import generate_ica_time_series
+from root.generate_ica_time_series_NILEARN import generate_ica_time_series_NILEARN
 from root.images_cleaner import images_cleaner
 
 def main():
@@ -15,8 +16,10 @@ def main():
     generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER)
 
     # CLUSTERING VIA SVM + CV
-    TIME_SERIES_FOLDER = "./bin/output/test/time_series/"
-    OUTPUT_FOLDER = "./bin/output/test/"
+    TIME_SERIES_FOLDER = "./bin/output/test2/time_series/"
+    OUTPUT_FOLDER = "./bin/output/test2/"
     clustering(TIME_SERIES_FOLDER, OUTPUT_FOLDER)
+
+
 
 main()
