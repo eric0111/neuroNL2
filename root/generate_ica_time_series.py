@@ -1,14 +1,17 @@
 import os
-
 import nilearn
 import numpy
 from matplotlib import pyplot as plt
 from nilearn import plotting
 from nilearn.decomposition import CanICA
+from root.utils.create_folder import create_folder
 
 
-def generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER):
-    # LOAD IMAGES
+def load_paths(IMAGES_FOLDER, OUTPUT_FOLDER):
+    # LOAD PATHS
+    create_folder(OUTPUT_FOLDER)
+    create_folder(OUTPUT_FOLDER + "time_series/")
+
     print("Loading images...")
     images_filenames = os.listdir(IMAGES_FOLDER)
     try:
@@ -17,15 +20,15 @@ def generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER):
         print(e)
     images_filenames.sort()
 
-    #print(images_filenames)
-
     images_abs_paths = []
     for atlas in images_filenames:
         images_abs_paths.append(IMAGES_FOLDER + atlas)
 
-    #print(images_abs_paths)
+    return images_filenames, images_abs_paths
 
-    images = nilearn.image.load_img(images_abs_paths[0:24] + images_abs_paths[146:170]) #todo correct thinICA
+def extract_components(images_abs_paths, OUTPUT_FOLDER):
+    #extract components from 20 images (10 from the control group and 10 from patients)
+    images = nilearn.image.load_img(images_abs_paths[0:10] + images_abs_paths[-11:-1])
 
     # RUN ICA
     print("Running ICA...")
@@ -72,11 +75,24 @@ def generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER):
 
     plt.savefig(OUTPUT_FOLDER + "regions_extracted_img.png")
 
-    #GENERATE AND SAVE TIME SERIES
+    return extractor
+
+def generate_time_series(images_filenames, images_abs_paths, extractor, OUTPUT_FOLDER):
+    # GENERATE AND SAVE TIME SERIES
     print("Generating time-series...")
     for filename, image in zip(images_filenames, images_abs_paths):
         # call transform from RegionExtractor object to extract timeseries signals
         print(filename)
         timeseries_each_subject = extractor.transform(image)
         numpy.save(OUTPUT_FOLDER + "time_series/" + filename.split("/")[-1].split(".nii")[0] + ".npy",
-                                   timeseries_each_subject)
+                   timeseries_each_subject)
+
+def generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER):
+    images_filenames, images_abs_paths = load_paths(IMAGES_FOLDER, OUTPUT_FOLDER)
+
+    extractor = extract_components(images_abs_paths, OUTPUT_FOLDER)
+
+    generate_time_series(images_filenames, images_abs_paths, extractor, OUTPUT_FOLDER)
+
+
+

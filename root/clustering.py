@@ -7,8 +7,12 @@ from sklearn.metrics import accuracy_score
 import numpy as np
 import os
 
+from root.utils.create_folder import create_folder
+
+
 def clustering(TIME_SERIES_FOLDER, OUTPUT_FOLDER):
     # LOAD TIME-SERIES
+    create_folder(OUTPUT_FOLDER)
     time_series_filenames = os.listdir(TIME_SERIES_FOLDER)
     try:
         time_series_filenames.remove(".DS_Store")
@@ -33,7 +37,6 @@ def clustering(TIME_SERIES_FOLDER, OUTPUT_FOLDER):
             classes_list.append(5)
 
     classes = np.asarray(classes_list)
-    print(classes)
 
     #CLUSTERING VIA SVM + CROSS-VALIDATION
     kinds = ['correlation', 'partial correlation', 'tangent']
@@ -46,7 +49,6 @@ def clustering(TIME_SERIES_FOLDER, OUTPUT_FOLDER):
     for kind in kinds:
         scores[kind] = []
         for train, test in cv.split(pooled_subjects, classes):
-            print(train, test)
             # *ConnectivityMeasure* can output the estimated subjects coefficients
             # as a 1D arrays through the parameter *vectorize*.
             connectivity = ConnectivityMeasure(kind=kind, vectorize=True)

@@ -12,7 +12,7 @@ def images_cleaner(FILES, CONFOUNDS, OUTPUT_FOLDER):
     except Exception as e:
         print(e)
     atlas_files.sort()
-    #print(atlas_files)
+
     confounds_files = os.listdir(CONFOUNDS)
     try:
         confounds_files.remove(".DS_Store")
