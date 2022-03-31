@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 from nilearn import plotting
 from nilearn.decomposition import CanICA
 from root.utils.create_folder import create_folder
+#https://nilearn.github.io/auto_examples/03_connectivity/plot_extract_regions_dictlearning_maps.html
 
 
 def load_paths(IMAGES_FOLDER, OUTPUT_FOLDER):

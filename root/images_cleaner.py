@@ -32,14 +32,14 @@ def images_cleaner(FILES, CONFOUNDS, OUTPUT_FOLDER):
     bold = image.load_img(abs_atlas_files[0])
     TR = bold.header['pixdim'][4]
 
-    #GENERATE CLEANED IMAGES AND SAVE TO CLEANED_FOLDER
+    # GENERATE CLEANED IMAGES AND SAVE TO CLEANED_FOLDER
     for img, confounds, atlas_filename in zip(abs_atlas_files, abs_confounds_files, atlas_files):
         print("loading and cleaning: "+img)
-        #load confounds.tsv into numpy array and remove nan and infs
+        # load confounds.tsv into numpy array and remove nan and infs
         data = np.genfromtxt(fname=confounds, delimiter="\t", skip_header=1,filling_values=1)
         confounds = numpy.nan_to_num(data, copy=True)
 
-        #clean image
+        # clean image
         temp_cleaned_signal = image.clean_img(img, detrend=False, standardize=True, t_r=TR,
                                          confounds=confounds)
         cleaned_signal = image.clean_img(temp_cleaned_signal, high_pass=0.01, t_r=TR)
