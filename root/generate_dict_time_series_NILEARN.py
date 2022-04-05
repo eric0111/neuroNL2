@@ -67,7 +67,8 @@ def extract_components(images_abs_paths, OUTPUT_FOLDER):
                               memory="nilearn_cache", memory_level=2,
                               random_state=0,
                               low_pass=0.08,
-                              high_pass=0.01)
+                              high_pass=0.01,
+                              t_r=2)
     # Fit to the data
     dict_learn.fit(images)
     # Resting state networks/maps in attribute `components_img_`

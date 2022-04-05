@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 #matplotlib inline
 import warnings
+
 warnings.filterwarnings("ignore")
 plt.style.use('ggplot')
 
@@ -17,12 +18,11 @@ from sklearn.metrics import roc_curve
 from sklearn import metrics
 
 #keras - for NN models
+from tensorflow import keras
 from keras.models import Model, Sequential
 from keras.layers import Input, Dense
 from keras.layers import LSTM, GRU
 from keras import optimizers
-from tensorflow.keras.utils import plot_model
-from tensorflow.keras import utils
 from sklearn.metrics import roc_curve
 from keras.utils.vis_utils import plot_model
 import tensorflow as tf
@@ -111,7 +111,8 @@ def get_train_test(X, y, i, verbrose=False):
 
 
 def test_rnn():
-    TIME_SERIES_FOLDER = "/Users/eb/PycharmProjects/neuroNL2/root/bin/output/stopsignal2/time_series/"
+    TIME_SERIES_FOLDER = "/home/eb/PycharmProjects/neuroNL2/root/bin/output/stopsignal2/time_series_dict/"
+    #TIME_SERIES_FOLDER = "/home/eb/PycharmProjects/neuroNL2/root/bin/output/bart2/time_series_dict/"
     all_subjects_data, labels = generate_labels(TIME_SERIES_FOLDER)
 
     print('N control:', labels.count(1))
@@ -158,16 +159,11 @@ def test_rnn():
     t_shape = np.array(all_subjects_data_reshaped).shape[1]
     RSN_shape = np.array(all_subjects_data_reshaped).shape[2]
 
-    model.add(LSTM(units=70,  # dimensionality of the output space
-                   dropout=0.4,  # Fraction of the units to drop (inputs)
-                   recurrent_dropout=0.15,  # Fraction of the units to drop (recurent state)
-                   return_sequences=True,  # return the last state in addition to the output
-                   input_shape=(t_shape, RSN_shape)))
-    model.add(GRU(units=70,  # dimensionality of the output space
-                   dropout=0.4,  # Fraction of the units to drop (inputs)
-                   recurrent_dropout=0.15,  # Fraction of the units to drop (recurent state)
-                   return_sequences=True,  # return the last state in addition to the output
-                   input_shape=(t_shape, RSN_shape)))
+    # model.add(LSTM(units=70,  # dimensionality of the output space
+    #                dropout=0.4,  # Fraction of the units to drop (inputs)
+    #                recurrent_dropout=0.15,  # Fraction of the units to drop (recurent state)
+    #                return_sequences=True,  # return the last state in addition to the output
+    #                input_shape=(t_shape, RSN_shape)))
 
     # model.add(LSTM(units=60,
     #                dropout=0.4,
@@ -183,6 +179,11 @@ def test_rnn():
     #                dropout=0.4,
     #                recurrent_dropout=0.15,
     #                return_sequences=False))
+    model.add(GRU(units=70,  # dimensionality of the output space
+                  dropout=0.4,  # Fraction of the units to drop (inputs)
+                  recurrent_dropout=0.15,  # Fraction of the units to drop (recurent state)
+                  return_sequences=True,  # return the last state in addition to the output
+                  input_shape=(t_shape, RSN_shape)))
 
     model.add(GRU(units=60,
                    dropout=0.4,
@@ -224,6 +225,7 @@ def test_rnn():
     X = all_subjects_data_reshaped
     y = labels
 
+
     #changel labels to 0 1
     print(y)
     for i in range(len(y)):
@@ -237,8 +239,21 @@ def test_rnn():
     i = 8
     verbrose = True
 
+    ## data augmentation
+    from imblearn.over_sampling import SMOTE
+
+    sm = SMOTE(random_state=42)
+
+    nsamples, nx, ny = np.asarray(X).shape
+    X = np.asarray(X).reshape((nsamples, nx * ny))
+
+    X, y = sm.fit_resample(X, y)
+    ##
+
     X_train, X_test, y_train, y_test = train_test_split(X,
                                                         y, test_size=0.2, random_state=i)
+
+
 
     # Reshapes data to 4D for Hierarchical RNN.
     t_shape = np.array(all_subjects_data_reshaped).shape[1]
@@ -255,8 +270,8 @@ def test_rnn():
         print(X_test.shape[0], 'test samples')
 
     # Converts class vectors to binary class matrices.
-    y_train = utils.to_categorical(y_train, 2)
-    y_test = utils.to_categorical(y_test, 2)
+    y_train = tf.keras.utils.to_categorical(y_train, 2)
+    y_test = tf.keras.utils.to_categorical(y_test, 2)
 
     history = model.fit(X_train, y_train, validation_split=0.2, epochs=30)
 

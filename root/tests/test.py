@@ -20,23 +20,23 @@ import time
     #images = nilearn.image.load_img(images_abs_paths[0:15] + images_abs_paths[-16:-1])
     ## ko bart
 
-
-# t = time.time()
-# IMAGES_FOLDER = "/home/eb/Desktop/stopsignal_cleaned/"
-# OUTPUT_FOLDER = "../bin/output/stopsignal/"
-# generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER)
-# elapsed = time.time() - t
-# print("generate_ica_time_series: ", elapsed)
-#generate_ica_time_series:  2562.8496882915497 - 43 mins
+#STOPSIGNAL
+t = time.time()
+FILES  =  "/home/eb/Desktop/stopsignal/"
+CONFOUNDS =  "/home/eb/Desktop/stopsignal_confounds/"
+OUTPUT_FOLDER = "/home/eb/Desktop/stopsignal_cleaned/"
+images_cleaner(FILES, CONFOUNDS, OUTPUT_FOLDER)
+elapsed = time.time() - t
+print("images_cleaner: ", elapsed)
+#images_cleaner:  6574.576639652252 - 110 mins
 
 t = time.time()
 IMAGES_FOLDER = "/home/eb/Desktop/stopsignal_cleaned/"
-OUTPUT_FOLDER = "../bin/output/stopsignal2/"
-CONFOUNDS = "/home/eb/Desktop/stopsignal_confounds/"
-generate_ica_time_series_NILEARN(IMAGES_FOLDER, OUTPUT_FOLDER, CONFOUNDS)
+OUTPUT_FOLDER = "../bin/output/stopsignal/"
+generate_ica_time_series(IMAGES_FOLDER, OUTPUT_FOLDER)
 elapsed = time.time() - t
-print("generate_ica_time_series2: ", elapsed)
-#generate_ica_time_series:
+print("generate_ica_time_series: ", elapsed)
+#generate_ica_time_series:  2562.8496882915497 - 43 mins
 
 t = time.time()
 TIME_SERIES_FOLDER = "../bin/output/stopsignal2/time_series/"
@@ -47,13 +47,14 @@ print("clustering: ", elapsed)
 #clustering:  36.4996874332428 - 35 secs
 
 
-# t = time.time()
-# FILES  =  "/home/eb/Desktop/bart/"
-# CONFOUNDS =  "/home/eb/Desktop/bart_confounds/"
-# OUTPUT_FOLDER = "/home/eb/Desktop/bart_cleaned/"
-# images_cleaner(FILES, CONFOUNDS, OUTPUT_FOLDER)
-# elapsed = time.time() - t
-# print("images_cleaner: ", elapsed)
+#BART
+t = time.time()
+FILES  =  "/home/eb/Desktop/bart/"
+CONFOUNDS =  "/home/eb/Desktop/bart_confounds/"
+OUTPUT_FOLDER = "/home/eb/Desktop/bart_cleaned/"
+images_cleaner(FILES, CONFOUNDS, OUTPUT_FOLDER)
+elapsed = time.time() - t
+print("images_cleaner: ", elapsed)
 # #images_cleaner:  6574.576639652252 - 110 mins
 
 t = time.time()

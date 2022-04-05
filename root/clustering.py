@@ -42,11 +42,19 @@ def clustering(TIME_SERIES_FOLDER, OUTPUT_FOLDER):
     kinds = ['correlation', 'partial correlation', 'tangent']
     #kinds = ['correlation']
 
-    cv = StratifiedShuffleSplit(n_splits=15, random_state=0, test_size=15)
+    n_splits = 15
+    test_size = 15
+    cv = StratifiedShuffleSplit(n_splits=n_splits, random_state=0, test_size=test_size)
     pooled_subjects = np.asarray(pooled_subjects)
+
+    print("## DATA ##")
+    print("dataset_size: ", len(time_series_filenames))
+    print("test_size :", test_size)
+    print("n_splits: ", n_splits, "\n")
 
     scores = {}
     for kind in kinds:
+        print("## ", kind, " ##")
         scores[kind] = []
         for train, test in cv.split(pooled_subjects, classes):
             # *ConnectivityMeasure* can output the estimated subjects coefficients
@@ -59,13 +67,22 @@ def clustering(TIME_SERIES_FOLDER, OUTPUT_FOLDER):
             # make predictions for the left-out test subjects
             predictions = classifier.predict(
                 connectivity.transform(pooled_subjects[test]))
-            # print(predictions)
-            # print(classes[test])
+
+            #print results
+            # print("classes: ", classes[test])
+            # print("predict: ", predictions)
+            # print("accuracy :", accuracy_score(classes[test], predictions), "\n")
+
             # store the accuracy for this cross-validation fold
             scores[kind].append(accuracy_score(classes[test], predictions))
 
     mean_scores = [np.mean(scores[kind]) for kind in kinds]
     scores_std = [np.std(scores[kind]) for kind in kinds]
+
+    print("FINAL RESULTS")
+    print("kinds: ", kinds)
+    print("mean_scores: ", mean_scores)
+    print("scores_std: ", scores_std, "\n")
 
     plt.figure(figsize=(6, 4))
     positions = np.arange(len(kinds)) * .1 + .1
