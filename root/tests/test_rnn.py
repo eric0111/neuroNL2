@@ -1,113 +1,30 @@
 import numpy as np
-from nilearn import datasets
-import numpy as np
 import matplotlib.pyplot as plt
 #matplotlib inline
 import warnings
-
 warnings.filterwarnings("ignore")
 plt.style.use('ggplot')
 
-#nilearn - neuroimaging tailored library
-from nilearn.input_data import NiftiMapsMasker
-from nilearn import plotting
-
-#sklearn - basic ML tools
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import roc_curve
-from sklearn import metrics
-
-#keras - for NN models
-from tensorflow import keras
-from keras.models import Model, Sequential
-from keras.layers import Input, Dense
-from keras.layers import LSTM, GRU
-from keras import optimizers
-from sklearn.metrics import roc_curve
-from keras.utils.vis_utils import plot_model
 import tensorflow as tf
-
-#scipy- statistical analysis tools
-from scipy.stats import ttest_1samp
-#from scipy import interp
-
 from root.utils.generate_labels import generate_labels
 
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_curve
 from sklearn.metrics import accuracy_score
 
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM, GRU
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras.optimizer_v2.learning_rate_schedule import ExponentialDecay
 
-def boostrapping_hypothesis_testing(X_train, y_train, X_test, y_test,
-                                    n_iterations=100, n_epochs=50):
-    '''
-    hypothesis testing function
-    X_train, y_train, X_test, y_test- the data
-    n_iterations- number of bootdtaping iterations
-    n_epochs - number of epochs for model's training
-    '''
+#data augmentation deep learning
+#tsaug per data augmentation
+#giocare con la network
 
-    accuracy = []  ## model accuracy
-    roc_msrmnts_fpr = []  ## false positive rate
-    roc_msrmnts_tpr = []  ## true positive rate
+#kaggle per esecuzione
+#
 
-    # run bootstrap
-    for i in range(n_iterations):
-        # prepare train and test sets
-        X_train, X_test, y_train, y_test = get_train_test(all_subjects_data_reshaped,
-                                                          labels, i=i, verbrose=False)
-        # fit model
-        print('fitting..')
-        model.fit(X_train, y_train, validation_split=0.2, epochs=n_epochs)
-
-        # evaluate model
-        print('evaluating..')
-        y_pred = model.predict(X_test)
-        y_test_1d = [i[0] for i in y_test]
-        y_pred_1d = [1.0 if i[0] > .5 else 0.0 for i in y_pred]
-
-        fpr, tpr, _ = roc_curve(y_test_1d, y_pred_1d)
-
-        acc_score = accuracy_score(y_test_1d, y_pred_1d)
-
-        accuracy.append(acc_score)
-        roc_msrmnts_fpr.append(fpr)
-        roc_msrmnts_tpr.append(tpr)
-
-    return accuracy, roc_msrmnts_fpr, roc_msrmnts_tpr
-
-
-
-
-# The data, split between train and test sets.
-
-def get_train_test(X, y, i, verbrose=False):
-    '''
-    split to train and test and reshape data
-    X data
-    y labels
-    i random state
-    '''
-    X_train, X_test, y_train, y_test = train_test_split(X,
-                                                        y, test_size=0.2, random_state=i)
-
-    # Reshapes data to 4D for Hierarchical RNN.
-    t_shape = np.array(all_subjects_data_reshaped).shape[1]
-    RSN_shape = np.array(all_subjects_data_reshaped).shape[2]
-
-    X_train = np.reshape(X_train, (len(X_train), t_shape, RSN_shape))
-    X_test = np.reshape(X_test, (len(X_test), t_shape, RSN_shape))
-
-    X_train = X_train.astype('float32')
-    X_test = X_test.astype('float32')
-
-    if verbrose:
-        print(X_train.shape[0], 'train samples')
-        print(X_test.shape[0], 'test samples')
-
-    # Converts class vectors to binary class matrices.
-    y_train = utils.to_categorical(y_train, 2)
-    y_test = utils.to_categorical(y_test, 2)
-
-    return X_train, X_test, y_train, y_test
 
 
 def test_rnn():
@@ -159,6 +76,14 @@ def test_rnn():
     t_shape = np.array(all_subjects_data_reshaped).shape[1]
     RSN_shape = np.array(all_subjects_data_reshaped).shape[2]
 
+    #3d convolution
+    #https://github.com/bsplku/3dcnn4fmri/blob/master/Python_code/3dcnn_fmri_demo.ipynb
+    # model.add(Convolution1D(input_shape=(t_shape, RSN_shape),
+    #                         filters=32,
+    #                         kernel_size=(3),
+    #                         activation=tf.nn.relu))
+    # ###
+
     # model.add(LSTM(units=70,  # dimensionality of the output space
     #                dropout=0.4,  # Fraction of the units to drop (inputs)
     #                recurrent_dropout=0.15,  # Fraction of the units to drop (recurent state)
@@ -179,6 +104,7 @@ def test_rnn():
     #                dropout=0.4,
     #                recurrent_dropout=0.15,
     #                return_sequences=False))
+
     model.add(GRU(units=70,  # dimensionality of the output space
                   dropout=0.4,  # Fraction of the units to drop (inputs)
                   recurrent_dropout=0.15,  # Fraction of the units to drop (recurent state)
@@ -203,8 +129,17 @@ def test_rnn():
     model.add(Dense(units=2,
                     activation="sigmoid"))
 
+    # lr_schedule = ExponentialDecay(
+    #     initial_learning_rate= 1e-3,
+    #     decay_steps=10000,
+    #     decay_rate=0.99
+    # )
+    # model.compile(loss='binary_crossentropy',
+    #               optimizer=tf.keras.optimizers.Adam(learning_rate=lr_schedule),
+    #               metrics=['binary_accuracy'])
+
     model.compile(loss='binary_crossentropy',
-                  optimizer=tf.keras.optimizers.Adam(lr=0.001),
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
                   metrics=['binary_accuracy'])
 
     print(model.summary())
@@ -239,20 +174,29 @@ def test_rnn():
     i = 8
     verbrose = True
 
-    ## data augmentation
+    X_train, X_test, y_train, y_test = train_test_split(X,
+                                                        y, test_size=0.1, random_state=i)
+
+    ## data augmentation - training set
     from imblearn.over_sampling import SMOTE
 
     sm = SMOTE(random_state=42)
 
-    nsamples, nx, ny = np.asarray(X).shape
-    X = np.asarray(X).reshape((nsamples, nx * ny))
+    nsamples, nx, ny = np.asarray(X_train).shape
+    X_train = np.asarray(X_train).reshape((nsamples, nx * ny))
 
-    X, y = sm.fit_resample(X, y)
+    X_train, y_train = sm.fit_resample(X_train, y_train)
     ##
 
-    X_train, X_test, y_train, y_test = train_test_split(X,
-                                                        y, test_size=0.2, random_state=i)
+    ## data augmentation - test set
+    from imblearn.over_sampling import SMOTE
 
+    sm = SMOTE(random_state=42)
+
+    nsamples, nx, ny = np.asarray(X_test).shape
+    X_test = np.asarray(X_test).reshape((nsamples, nx * ny))
+
+    X_test, y_test = sm.fit_resample(X_test, y_test)
 
 
     # Reshapes data to 4D for Hierarchical RNN.
@@ -273,7 +217,11 @@ def test_rnn():
     y_train = tf.keras.utils.to_categorical(y_train, 2)
     y_test = tf.keras.utils.to_categorical(y_test, 2)
 
-    history = model.fit(X_train, y_train, validation_split=0.2, epochs=30)
+    history = model.fit(X_train, y_train, validation_split=0.1, epochs=100,
+                        callbacks= [
+                            EarlyStopping(monitor='val_loss', mode='min', patience=10, restore_best_weights=True),
+                            ReduceLROnPlateau(monitor='val_loss', mode='min', patience=5, factor=0.5, min_lr=1e-5)
+                        ])
 
     # summarize history for accuracy
     plt.plot(history.history['binary_accuracy'])
@@ -293,6 +241,15 @@ def test_rnn():
     plt.legend(['train', 'test'], loc='upper right')
     plt.show()
 
-    accuracy, roc_msrmnts_fpr, roc_msrmnts_tpr = boostrapping_hypothesis_testing(X_train, y_train, X_test, y_test)
+    #model.fit(X_train, y_train, epochs=30)
+
+    # evaluate model
+    print('evaluating..')
+    y_pred = model.predict(X_test)
+    y_test_1d = [i[0] for i in y_test]
+    y_pred_1d = [1.0 if i[0] > .5 else 0.0 for i in y_pred]
+    acc_score = accuracy_score(y_test_1d, y_pred_1d)
+
+    print(acc_score)
 
 test_rnn()
