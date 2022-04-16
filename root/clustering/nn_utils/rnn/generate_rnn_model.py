@@ -25,5 +25,4 @@ def generate_rnn_model(all_subjects_data_reshaped, CNN, LSTM, GRU):
                   metrics=['binary_accuracy'])
 
     print(model.summary())
-
     return model
