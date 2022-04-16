@@ -16,7 +16,7 @@ from utils.create_folder import create_folder
 FILES = "/home/eb/Desktop/stopsignal/"
 CONFOUNDS = "/home/eb/Desktop/stopsignal_confounds/"
 OUTPUT_FOLDER = "./bin/output/stopsignal/"
-TIME_SERIES_FOLDER = "root/bin/output/stopsignal/time_series/"
+TIME_SERIES_FOLDER = "./bin/output/stopsignal/time_series/"
 components_method = constants.METHOD_DICTIONARY_LEARNING
 
 def main():
@@ -52,4 +52,3 @@ def main():
 
 
 main()
-#print(datetime.now())
