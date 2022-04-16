@@ -11,6 +11,7 @@ def transformers(TIME_SERIES_FOLDER):
     X_train, X_test, y_train, y_test = generate_training_test_set(all_subjects_data_reshaped, labels)
     X_train, X_test, y_train, y_test = data_augmentation(X_train, X_test, y_train, y_test)
 
-    model = generate_tranformer_model(X_train)
-    history= fit_transformer_model(model, X_train, y_train)
+
+    model, X_test, y_test, X_train, y_train = generate_tranformer_model(all_subjects_data_reshaped, X_train, X_test, y_train, y_test)
+    history = fit_transformer_model(model, X_train, y_train)
     generate_results(history, model, X_test, y_test)

@@ -12,7 +12,6 @@ def extract_components_DICT(images_abs_paths):
                               smoothing_fwhm=6.,
                               memory="nilearn_cache", memory_level=2,
                               random_state=0,
-                              standardize=constants.STANDARDIZE,
                               low_pass=constants.LOW_PASS,
                               high_pass=constants.HIGH_PASS,
                               t_r=2)

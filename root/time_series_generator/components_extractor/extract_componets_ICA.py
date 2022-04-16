@@ -14,7 +14,6 @@ def extract_components_ICA(images_abs_paths):
                     verbose=10,
                     mask_strategy='whole-brain-template',
                     random_state=0,
-                    standardize=constants.STANDARDIZE,
                     low_pass=constants.LOW_PASS,
                     high_pass=constants.HIGH_PASS,
                     t_r=2)

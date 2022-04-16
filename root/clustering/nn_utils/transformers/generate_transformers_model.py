@@ -1,4 +1,5 @@
 import keras
+import numpy as np
 from keras import layers
 import tensorflow as tf
 
@@ -43,7 +44,27 @@ def build_model(
     return keras.Model(inputs, outputs)
 
 
-def generate_tranformer_model(X_train):
+def generate_tranformer_model(all_subjects_data_reshaped, X_train, X_test, y_train, y_test):
+    verbose = False
+
+    # Reshapes data to 4D for Hierarchical RNN.
+    t_shape = np.array(all_subjects_data_reshaped).shape[1]
+    RSN_shape = np.array(all_subjects_data_reshaped).shape[2]
+
+    X_train = np.reshape(X_train, (len(X_train), t_shape, RSN_shape))
+    X_test = np.reshape(X_test, (len(X_test), t_shape, RSN_shape))
+
+    X_train = X_train.astype('float32')
+    X_test = X_test.astype('float32')
+
+    if verbose:
+        print(X_train.shape[0], 'train samples')
+        print(X_test.shape[0], 'test samples')
+
+    # Converts class vectors to binary class matrices.
+    y_train = tf.keras.utils.to_categorical(y_train, 2)
+    y_test = tf.keras.utils.to_categorical(y_test, 2)
+
     input_shape = X_train.shape[1:]
 
     model = build_model(
@@ -57,15 +78,10 @@ def generate_tranformer_model(X_train):
         dropout=0.25,
     )
 
-    # model.compile(
-    #     loss="sparse_categorical_crossentropy",
-    #     optimizer=keras.optimizers.Adam(learning_rate=1e-4),
-    #     metrics=["sparse_categorical_accuracy"],
-    # )
     model.compile(loss='binary_crossentropy',
                   optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
                   metrics=['binary_accuracy'])
 
     model.summary()
 
-    return model
+    return model, X_test, y_test, X_train, y_train

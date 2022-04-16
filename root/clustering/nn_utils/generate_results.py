@@ -1,3 +1,6 @@
+import datetime
+
+from dateutil.utils import today
 from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score, confusion_matrix
 
@@ -10,7 +13,8 @@ def generate_results(history, model, X_test, y_test):
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper right')
-    plt.show()
+    #plt.show()
+    plt.savefig(str(datetime.datetime.now()) + ".png")
 
     # summarize history for loss
     plt.plot(history.history['loss'])
@@ -19,7 +23,8 @@ def generate_results(history, model, X_test, y_test):
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper right')
-    plt.show()
+    #plt.show()
+    plt.savefig(str(datetime.datetime.now())+".png")
 
     # model.fit(X_train, y_train, epochs=30)
 
@@ -28,8 +33,9 @@ def generate_results(history, model, X_test, y_test):
     y_pred = model.predict(X_test)
     y_test_1d = [i[0] for i in y_test]
     y_pred_1d = [1.0 if i[0] > .5 else 0.0 for i in y_pred]
-    #acc_score = accuracy_score(y_test_1d, y_pred_1d)
-    # print(acc_score)
+    acc_score = accuracy_score(y_test_1d, y_pred_1d)
+    print("acc_score")
+    print(acc_score)
 
     tn, fp, fn, tp = confusion_matrix(y_test_1d, y_pred_1d).ravel()
 

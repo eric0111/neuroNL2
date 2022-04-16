@@ -18,10 +18,16 @@ def svm_clustering(pooled_subjects, time_series_filenames, classes):
     print("test_size :", test_size)
     print("n_splits: ", n_splits, "\n")
 
-    scores = {}
+    #scores = {}
+    sensitivity = {}
+    specificity = {}
+    accuracy = {}
     for kind in kinds:
         print("## ", kind, " ##")
-        scores[kind] = []
+        #scores[kind] = []
+        sensitivity[kind]= []
+        specificity[kind] = []
+        accuracy[kind] = []
         for train, test in cv.split(pooled_subjects, classes):
             # *ConnectivityMeasure* can output the estimated subjects coefficients
             # as a 1D arrays through the parameter *vectorize*.
@@ -42,14 +48,30 @@ def svm_clustering(pooled_subjects, time_series_filenames, classes):
             # store the accuracy for this cross-validation fold
             # scores[kind].append(accuracy_score(classes[test], predictions))
             tn, fp, fn, tp = confusion_matrix(classes[test], predictions).ravel()
-            sensitivity = tp / (tp + fn)
-            specificity = tn / (tn + fp)
-            accuracy = (tp + tn) / (tp + tn + fp + fn)
-            scores[kind].append(sensitivity)
-            scores[kind].append(specificity)
-            scores[kind].append(accuracy)
+            sens = tp / (tp + fn)
+            sp = tn / (tn + fp)
+            acc = (tp + tn) / (tp + tn + fp + fn)
 
-    mean_scores = [np.mean(scores[kind]) for kind in kinds]
-    scores_std = [np.std(scores[kind]) for kind in kinds]
+            sensitivity[kind].append(sens)
+            specificity[kind].append(sp)
+            accuracy[kind].append(acc)
 
-    return kinds, scores, mean_scores, scores_std
+    # mean_scores = [np.mean(scores[kind]) for kind in kinds]
+    # scores_std = [np.std(scores[kind]) for kind in kinds]
+    mean_sensitivity = [np.mean(sensitivity[kind]) for kind in kinds]
+    sensitivity_std = [np.std(sensitivity[kind]) for kind in kinds]
+    mean_specificity = [np.mean(specificity[kind]) for kind in kinds]
+    specificity_std = [np.std(specificity[kind]) for kind in kinds]
+    mean_accuracy = [np.mean(accuracy[kind]) for kind in kinds]
+    accuracy_std = [np.std(accuracy[kind]) for kind in kinds]
+
+    print("mean_sensitivity", mean_sensitivity)
+    print("sensitivity_std", sensitivity_std)
+    print("mean_specificity", mean_specificity)
+    print("specificity_std", specificity_std)
+    print("mean_sensitivity", mean_sensitivity)
+    print("sensitivity_std", sensitivity_std)
+    print("mean_accuracy", mean_accuracy)
+    print("accuracy_std", accuracy_std)
+
+    #return kinds, scores, mean_scores, scores_std
